@@ -56,3 +56,24 @@ cursor.execute(query)
 result = cursor.fetchall()
 for district in result:
     print(district[0] + ": " +str(district[1]))
+
+##PERFORM SOME BASIC DATA ANALYSIS
+#TOP GROSSING MOVIES 
+print("\n")
+query = "SELECT F.FILM_ID, F.TITLE, SUM(AMOUNT) AS GROSS_EARNINGS \
+    FROM PAYMENT P \
+    INNER JOIN RENTAL R \
+        ON R.RENTAL_ID = P.RENTAL_ID \
+    INNER JOIN INVENTORY I \
+        ON I.INVENTORY_ID = R.INVENTORY_ID \
+    INNER JOIN FILM F \
+        ON F.FILM_ID = I.FILM_ID \
+    GROUP BY 1,2 \
+    ORDER BY 3 DESC LIMIT 10"
+cursor.execute(query)
+result = cursor.fetchall()
+for film in result:
+    film_id = str(film[0])
+    title = str(film[1])
+    earnings = str(film[2])
+    print("Film_ID:" + film_id + "  Film Title:" + title + "  Earnings:" + earnings + "\n")
