@@ -77,3 +77,51 @@ for film in result:
     title = str(film[1])
     earnings = str(film[2])
     print("Film_ID:" + film_id + "  Film Title:" + title + "  Earnings:" + earnings + "\n")
+
+#TOP GROSSING CITIES 
+print("\n")
+query = "SELECT CI.CITY_ID, CI.CITY, SUM(AMOUNT) AS GROSS_EARNINGS \
+    FROM PAYMENT P \
+    INNER JOIN CUSTOMER C \
+        ON C.CUSTOMER_ID = P.CUSTOMER_ID \
+    INNER JOIN ADDRESS A \
+        ON A.ADDRESS_ID = C.ADDRESS_ID \
+    INNER JOIN CITY CI \
+        ON CI.CITY_ID = A.CITY_ID \
+    GROUP BY 1,2 \
+    ORDER BY 3 DESC LIMIT 10"
+cursor.execute(query)
+result = cursor.fetchall()
+for city in result:
+    city_id = str(city[0])
+    title = str(city[1])
+    earnings = str(city[2])
+    print("City_ID:" + city_id + "  City Name:" + title + "  Earnings:" + earnings + "\n")
+
+#REVENUE OF A MOVIE BY CUSTOMER CITY AND BY MONTH
+print("\n")
+query = "SELECT F.FILM_ID, F.TITLE, EXTRACT('MONTH' FROM P.PAYMENT_DATE), CI.CITY, SUM(AMOUNT) AS GROSS_EARNINGS \
+    FROM FILM F \
+    INNER JOIN INVENTORY I \
+        ON I.FILM_ID = F.FILM_ID \
+    INNER JOIN RENTAL R \
+        ON R.INVENTORY_ID = I.INVENTORY_ID \
+    INNER JOIN PAYMENT P \
+        ON P.RENTAL_ID = R.RENTAL_ID \
+    INNER JOIN CUSTOMER C \
+        ON C.CUSTOMER_ID = R.CUSTOMER_ID \
+    INNER JOIN ADDRESS A \
+        ON C.ADDRESS_ID = A.ADDRESS_ID \
+    INNER JOIN CITY CI \
+        ON CI.CITY_ID = A.CITY_ID \
+    GROUP BY 1,2,3,4 \
+    ORDER BY 5 DESC LIMIT 10"
+cursor.execute(query)
+result = cursor.fetchall()
+for value in result:
+    film_id = str(value[0])
+    title = str(value[1])
+    month = str(value[2])
+    city = str(value[3])
+    earnings = str(value[4])
+    print("Film_ID:" + film_id + "  Film Name:" + title + "  Month:" + month +"  City Name:" + city + "  Earnings:" + earnings + "\n")
